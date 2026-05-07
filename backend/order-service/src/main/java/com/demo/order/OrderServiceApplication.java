@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableCaching
+// @EnableCaching //See to CacheConfig
 public class OrderServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(OrderServiceApplication.class, args);

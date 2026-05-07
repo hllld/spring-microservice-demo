@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: order-service
+  profiles:
+    active: cache
+#    active: default
   datasource:
     url: jdbc:h2:mem:orderdb
     driver-class-name: org.h2.Driver
@@ -20,14 +23,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-  cache:
-    type: redis
-    redis:
-      time-to-live: 60000			
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+#  cache:
+#    type: redis
+#    redis:
+#      time-to-live: 60000			
   cloud:
     openfeign:
       circuitbreaker:
