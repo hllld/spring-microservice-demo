@@ -20,44 +20,45 @@ import com.demo.user.service.UserService;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return userService.login(request.getEmail(), request.getPassword())
-                .map(token -> ResponseEntity.ok(Map.of("token", token)))
-                .orElse(ResponseEntity.status(401).build());
-    }
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+		return userService.login(request.getEmail(), request.getPassword())
+				.map(token -> ResponseEntity.ok(Map.of("token", token))).orElse(ResponseEntity.status(401).build());
+	}
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
-    }
+	@PostMapping("/register")
+	public ResponseEntity<User> register(@RequestBody User user) {
+		return ResponseEntity.ok(userService.createUser(user));
+	}
 
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
+	@GetMapping
+	public ResponseEntity<List<User>> getAllUsers() {
+		return ResponseEntity.ok(userService.getAllUsers());
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+		return ResponseEntity.ok(userService.getUserById(id));
+		/*
+		 * userService.getUserById(id) .map(ResponseEntity::ok)
+		 * .orElse(ResponseEntity.notFound().build());
+		 */
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+		userService.deleteUser(id);
+		return ResponseEntity.noContent().build();
+	}
 
-    @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        return ResponseEntity.ok("User Service is running");
-    }
+	@GetMapping("/health")
+	public ResponseEntity<String> health() {
+		return ResponseEntity.ok("User Service is running");
+	}
 }

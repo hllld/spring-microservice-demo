@@ -1,10 +1,10 @@
 package com.demo.order.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.demo.order.exception.ResourceNotFoundException;
 import com.demo.order.model.Order;
 import com.demo.order.repository.OrderRepository;
 
@@ -21,8 +21,11 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Optional<Order> getOrderById(Long id) {
-        return orderRepository.findById(id);
+    public Order getOrderById(Long id) {
+    	return orderRepository.findById(id)
+		.orElseThrow(() ->
+				new ResourceNotFoundException("Order not found with id: " + id));
+//        return orderRepository.findById(id);
     }
 
     public List<Order> getOrdersByUserId(Long userId) {

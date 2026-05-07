@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.demo.user.exception.ResourceNotFoundException;
 import com.demo.user.model.User;
 import com.demo.user.repository.UserRepository;
 import com.demo.user.security.JwtService;
@@ -29,8 +30,14 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+	/*
+	 * public Optional<User> getUserById(Long id) { return
+	 * userRepository.findById(id); }
+	 */
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+        		.orElseThrow(() ->
+        				new ResourceNotFoundException("User not found with id: " + id));
     }
 
     public User createUser(User user) {

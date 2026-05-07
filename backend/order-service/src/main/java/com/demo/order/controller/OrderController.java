@@ -1,14 +1,21 @@
 package com.demo.order.controller;
 
-import com.demo.order.model.Order;
-import com.demo.order.service.OrderService;
-import com.demo.order.service.UserClient;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.demo.order.model.Order;
+import com.demo.order.service.OrderService;
+import com.demo.order.service.UserClient;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -29,7 +36,8 @@ public class OrderController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Order> getOrderById(@PathVariable("id") Long id) {
-		return orderService.getOrderById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+//		return orderService.getOrderById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return ResponseEntity.ok(orderService.getOrderById(id));
 	}
 
 	@GetMapping("/user/{userId}")

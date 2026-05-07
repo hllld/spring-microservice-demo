@@ -22,7 +22,11 @@ function Login() {
             localStorage.setItem('token', response.data.token);
             navigate('/users');
         } catch (err) {
-            setError('Login failed, email or password is incorrect');
+            setError('Login failed, email or password is incorrect.');
+            //console.log(JSON.stringify(err, null, 2));
+            console.log(err.message);
+            console.log(err.code);
+
         }
     }
 
