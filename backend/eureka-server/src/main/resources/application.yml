@@ -19,3 +19,13 @@ eureka:
       defaultZone: http://admin:admin123@localhost:8761/eureka/
   server:
     enable-self-preservation: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true

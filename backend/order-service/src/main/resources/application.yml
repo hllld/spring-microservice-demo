@@ -55,4 +55,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,circuitbreakers
+        include: health,info,metrics,prometheus,circuitbreakers
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  observations:
+    key-values:
+      application: ${spring.application.name}

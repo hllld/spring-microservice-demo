@@ -3,17 +3,22 @@
 A full-stack microservice application built with Java 17, Spring Boot 3, Spring Cloud, and React.
 
 ## Architecture
+
+```
 Client (React)
-|
-v
+      |
+      v
 API Gateway (port 8080)
-|
-+---> User Service (port 8081) --> H2 Database
-|
-+---> Order Service (port 8082) --> H2 Database
-|
-+---> calls User Service via Feign + Eureka
+      |
+      +---> User Service (port 8081) --> H2 Database + Redis Cache
+      |
+      +---> Order Service (port 8082) --> H2 Database + Redis Cache
+                  |
+                  +---> calls User Service via Feign + Eureka
+      
 Service Registry: Eureka Server (port 8761)
+Monitoring: Prometheus (port 9090) + Grafana (port 3000)
+```
 
 ## Tech Stack
 
@@ -25,6 +30,7 @@ Service Registry: Eureka Server (port 8761)
 - **Eureka** — Service discovery and registration
 - **Spring Data JPA** — Database access
 - **H2** — In-memory database
+- **Redis** — Caching layer (toggleable via Spring Profile)
 - **OpenFeign** — Declarative service-to-service REST client
 - **Resilience4j** — Circuit breaker pattern
 - **Spring Security + JWT** — Authentication and authorization
@@ -35,6 +41,11 @@ Service Registry: Eureka Server (port 8761)
 - **React 18**
 - **React Router** — Client-side routing
 - **Axios** — HTTP client
+
+### Monitoring
+- **Prometheus** — Metrics collection
+- **Grafana** — Metrics visualization and dashboards
+- **Spring Actuator** — Exposes application metrics
 
 ### DevOps
 - **Docker + Docker Compose** — Containerization
@@ -48,6 +59,8 @@ Service Registry: Eureka Server (port 8761)
 | User Service | 8081 | User management + JWT auth |
 | Order Service | 8082 | Order management |
 | Frontend | 3000 | React web application |
+| Prometheus | 9090 | Metrics collection |
+| Grafana | 3000 | Metrics dashboard |
 
 ## Getting Started
 
@@ -96,29 +109,55 @@ npm install
 npm start
 ```
 
+**Step 6: Start Monitoring (optional)**
+```bash
+sudo systemctl start prometheus
+sudo systemctl start grafana-server
+```
+
+## Redis Caching
+
+Redis caching is toggleable via Spring Profile.
+
+**Enable cache:**
+```yaml
+spring:
+  profiles:
+    active: cache
+```
+
+**Disable cache (default):**
+```yaml
+# Remove or comment out the profiles section
+```
+
 ## API Endpoints
 
 All requests go through the API Gateway on port 8080.
 
 ### Authentication
-
+```
 POST /api/users/login
 Body: { "email": "alice@example.com", "password": "password123" }
 Returns: { "token": "eyJ..." }
-
+```
 
 ### Users (requires JWT token)
-GET  /api/users          # Get all users
-GET  /api/users/{id}     # Get user by ID
-POST /api/users/register # Register new user
-DELETE /api/users/{id}   # Delete user
+```
+GET    /api/users          # Get all users
+GET    /api/users/{id}     # Get user by ID
+POST   /api/users/register # Register new user
+DELETE /api/users/{id}     # Delete user
+```
 
 ### Orders (requires JWT token)
-GET  /api/orders              # Get all orders
-GET  /api/orders/{id}         # Get order by ID
-GET  /api/orders/user/{id}    # Get orders with user info (cross-service call)
-POST /api/orders              # Create order
-DELETE /api/orders/{id}       # Delete order
+```
+GET    /api/orders              # Get all orders
+GET    /api/orders/{id}         # Get order by ID
+GET    /api/orders/user/{id}    # Get orders with user info (cross-service call)
+POST   /api/orders              # Create order
+DELETE /api/orders/{id}         # Delete order
+```
 
 ## Key Features
 
@@ -126,8 +165,19 @@ DELETE /api/orders/{id}       # Delete order
 - **Load Balancing** — API Gateway uses client-side load balancing via `lb://` prefix
 - **Circuit Breaker** — If User Service is unavailable, Order Service returns fallback response instead of failing
 - **JWT Authentication** — Stateless authentication, all protected endpoints require Bearer token
-- **API Documentation** — Swagger UI available at `http://localhost:8080/swagger-ui.html`
+- **Redis Caching** — Toggleable caching layer, reduces database load and improves response time
 - **Global Exception Handler** — Unified error response format across all services, returns consistent JSON with status, message, and timestamp
+- **Monitoring** — Prometheus + Grafana dashboards for JVM metrics, CPU, memory, and HTTP request statistics
+- **API Documentation** — Swagger UI available at `http://localhost:8080/swagger-ui.html`
+
+## Performance Benchmark
+
+Tested with [golang-http-benchmark](https://github.com/hllld/golang-http-benchmark):
+
+| Scenario | TPS | Avg Response | Max Response |
+|----------|-----|-------------|-------------|
+| Without Redis cache | 688 | 72ms | 856ms |
+| With Redis cache | 981 | 50ms | 205ms |
 
 ## Demo Accounts
 
@@ -150,4 +200,5 @@ DELETE /api/orders/{id}       # Delete order
 
 ## Related Projects
 
+- [golang-http-benchmark](https://github.com/hllld/golang-http-benchmark) — HTTP benchmark tool used to test this service
 - [kotlin-android-client](https://github.com/hllld/kotlin-android-client) — Android client for this API (coming soon)

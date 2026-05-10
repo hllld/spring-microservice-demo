@@ -38,7 +38,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health,info,metrics,prometheus,gateway
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 springdoc:
   swagger-ui:
     urls:
